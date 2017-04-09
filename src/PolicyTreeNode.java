@@ -7,6 +7,9 @@ import java.util.Map;
  * Created by bishe2016 on 下午8:58 17-4-6.
  */
 public class PolicyTreeNode {
+    /**
+     * field: FIELD_SOURCE/FIELD_DESTINATION/FIELD_ACTION/FIELD_LEAF
+     */
     String field;
     HashMap<String, PolicyTreeNode> hashMap;
 
@@ -15,6 +18,11 @@ public class PolicyTreeNode {
         this.hashMap = hashMap;
     }
 
+    /**
+     * return the name of the next field according to current field
+     * @param field
+     * @return name of the next field
+     */
     String nextField(String field) {
         if(field == Constant.FIELD_SOURCE) {
             return Constant.FIELD_DESTINATION;
@@ -28,6 +36,11 @@ public class PolicyTreeNode {
         return null;
     }
 
+    /**
+     * construct policy tree. check conflicts before add the policy to the tree
+     * @param policy: policy to add
+     * @param policyTreeNode
+     */
     void constTree(Policy policy, PolicyTreeNode policyTreeNode) {
         String curField = policyTreeNode.getField();
         String context = policy.getContextByField(curField);
@@ -55,6 +68,15 @@ public class PolicyTreeNode {
         }
     }
 
+    /**
+     * check conflicts
+     * A >= B: SHADOW
+     * A <  B: Equal Action --> REDUNDANT
+     *         Different Action --> normal
+     * @param policy: policy to check
+     * @param policyTreeNode
+     * @return SHADOW/REDUNDANT/NOT_EQUAL(means normal)
+     */
     String searchPolicy(Policy policy, PolicyTreeNode policyTreeNode) {
         String curField = policyTreeNode.getField();
         String context = policy.getContextByField(curField);
@@ -74,7 +96,7 @@ public class PolicyTreeNode {
         }
 
         Iterator it = policyTreeNode.hashMap.entrySet().iterator();
-        while (it.hasNext()) {                              // can't be FIELD_ACTION || FIELD_LEAF
+        while (it.hasNext()) {                              // FIELD_SOURCE || FIELD_DESTINATION
             Map.Entry<String, PolicyTreeNode> entry = (Map.Entry<String, PolicyTreeNode>) it.next();
             String key = entry.getKey();
             PolicyTreeNode value = entry.getValue();
@@ -116,7 +138,7 @@ public class PolicyTreeNode {
     }
 
     String compareIP(String ipA, String ipB) {
-        String [] ipsA = ipA.split("\\.");
+        String [] ipsA = ipA.split("\\.");      //  IMPORTANT: REGEX, not normal string
         String [] ipsB = ipB.split("\\.");
 //        String [] flags = {Constant.COMP_EQUAL, Constant.COMP_EQUAL, Constant.COMP_EQUAL, Constant.COMP_EQUAL};
         for(int i = 0; i < 4; ++i) {

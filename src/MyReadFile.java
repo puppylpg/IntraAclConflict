@@ -17,7 +17,7 @@ public class MyReadFile {
         File file = new File(fileName);
         BufferedReader reader = null;
         try {
-            System.out.println("以行为单位读取文件内容，一次读一整行：");
+//            System.out.println("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
             String policyLine = null;
             int line = 1;
@@ -27,7 +27,7 @@ public class MyReadFile {
                 System.out.println("line " + line + ": " + policyLine);
                 line++;
 
-                String [] policy = policyLine.split(" +");
+                String [] policy = policyLine.split(" +");          // split according to ' '(or more)
 //                for(String part : policy) {
 //                    System.out.println(part);
 //                }

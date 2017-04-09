@@ -32,6 +32,13 @@ public class Policy {
 
     // String can't be modify without return. This is not reference-pass
     // But StringBuilder can be used to append(), or ArrayList can be used to add().
+
+    /**
+     * modify ip according to prefixLen
+     * @param ip
+     * @param prefixLen
+     * @return modified IP
+     */
     String modifyIP(String ip, int prefixLen) {
         String [] ips = ip.split("\\.");            // TODO:use REGEX to split, not regular string
         switch (prefixLen) {
