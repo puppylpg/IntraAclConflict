@@ -56,16 +56,28 @@ public class PolicyTreeNode {
 
         if(searchResult.equals(Constant.REDUNDANT)) {                       // redundant found
             System.out.println("REDUNDANT policy: " + policy.toString());
+            addToPolicyTree(policy, policyTreeNode);
         } else if(searchResult.equals(Constant.SHADOW)) {                   // shadow found
-            System.out.println("SHADOW polocy: " + policy.toString());
+            System.out.println("SHADOW policy: " + policy.toString());
         } else {                                                            // add to policy Tree
-            PolicyTreeNode newNode = new PolicyTreeNode(nextField(curField), new HashMap<String, PolicyTreeNode>());
-            System.out.println("New Node ===> context: " + context);
-            policyTreeNode.hashMap.put(context, newNode);
-            System.out.println("Add to HashMap.");
-            System.out.println(policyTreeNode.hashMap.size() + " key-value in total!");
-            constTree(policy, newNode);
+            addToPolicyTree(policy, policyTreeNode);
         }
+    }
+
+    /**
+     * add policy to policy tree
+     * @param policy
+     * @param policyTreeNode
+     */
+    void addToPolicyTree(Policy policy, PolicyTreeNode policyTreeNode) {
+        String curField = policyTreeNode.getField();
+        String context = policy.getContextByField(curField);
+        PolicyTreeNode newNode = new PolicyTreeNode(nextField(curField), new HashMap<String, PolicyTreeNode>());
+        System.out.println("New Node ===> context: " + context);
+        policyTreeNode.hashMap.put(context, newNode);
+        System.out.println("Add to HashMap.");
+        System.out.println(policyTreeNode.hashMap.size() + " key-value in total!");
+        constTree(policy, newNode);
     }
 
     /**
@@ -178,7 +190,7 @@ public class PolicyTreeNode {
     }
 
     public static void main(String [] args) {
-        String fileName = "/home/bishe2016/Liu/Graduation/IdeaProjects/test/policy.txt";
+        String fileName = "/home/bishe2016/Liu/Graduation/IdeaProjects/IntraAclConflict/policy.txt";
 
         ArrayList<Policy> policies = MyReadFile.createPolicyByLine(fileName);
 
