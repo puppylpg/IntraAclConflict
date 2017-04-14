@@ -120,56 +120,66 @@ public class PolicyCheck {
     }
 
     /**
-     * check list. if policies need to be deleted, recheck.
-     * @param policies
+     * before add to the list, check conflict first.
+     * @param iPsecRule
+     * @param rules
+     * @return
      */
-    static void checkListCycle(ArrayList<Policy> policies) {
-        for (int i = 0; i < policies.size(); ++i) {
-            Policy curPolicy = policies.get(i);
-            for(int j = 0; j < i; ++j) {
-                Policy prePolicy = policies.get(j);
-                String preSrcIP = prePolicy.getContextByField(Constant.FIELD_SOURCE);
-                String curSreIP = curPolicy.getContextByField(Constant.FIELD_SOURCE);
-                String preDesIP = prePolicy.getContextByField(Constant.FIELD_DESTINATION);
-                String curDesIP = curPolicy.getContextByField(Constant.FIELD_DESTINATION);
-                String preAction = prePolicy.getContextByField(Constant.FIELD_ACTION);
-                String curAction = curPolicy.getContextByField(Constant.FIELD_ACTION);
-                String srcIPComp = compareIP(preSrcIP, curSreIP);
-                String desIPComp = compareIP(preDesIP, curDesIP);
+    static boolean checkToAdd(Policy iPsecRule, ArrayList<Policy> rules) {
 
-                String ipComp = ipComps(srcIPComp, desIPComp);
+        Policy curPolicy = iPsecRule;
+        Iterator<Policy> it = rules.iterator();
+        while (it.hasNext()){
+            Policy prePolicy = it.next();
 
-                if(ipComp.equals(Constant.COMP_BE)) {               // Shadow
-                    System.out.println("SHADOW policy: " + curPolicy.toString() + " by " +
-                                        prePolicy.toString());
-                    System.out.println("Delete latter policy: " + curPolicy.toString());
-                    policies.remove(i);
-                    checkListCycle(policies);
-                    return;
-                } else if(ipComp.equals(Constant.COMP_LE)) {
-                    if(preAction.equals(curAction)) {               // Redundant
-                        System.out.println("REDUNDANT policy: " + prePolicy.toString() + " with "
-                                            + curPolicy.toString());
-                        System.out.println("Delete former policy: " + prePolicy.toString());
-                        policies.remove(j);
-                        checkListCycle(policies);
-                        return;
-                    } else {                                        // Special case
-                        System.out.println("SPECIAL_CASE policy: " + prePolicy.toString() + " of "
-                                            + curPolicy.toString());
-                    }
+            // Use modified IP to compare
+            String preSrcIP = prePolicy.getSrc();
+            String curSrcIP = curPolicy.getSrc();
+            String preDesIP = prePolicy.getDes();
+            String curDesIP = curPolicy.getDes();
+            // -1: discard, -2: forward without process, 0: protect with IPsec
+            String preAction = prePolicy.getAction();
+            String curAction = curPolicy.getAction();
+            String srcIPComp = compareIP(preSrcIP, curSrcIP);
+            String desIPComp = compareIP(preDesIP, curDesIP);
+
+            String ipComp = ipComps(srcIPComp, desIPComp);      //result of comparision in srcIP & desIP
+
+            if(ipComp.equals(Constant.COMP_BE)) {               // Shadow
+                // TODO: remember this infos, and alert on the web page together later
+                System.out.println("SHADOW policy: " + curPolicy.toString() + " by " +
+                        prePolicy.toString());
+                return true;
+            } else if(ipComp.equals(Constant.COMP_LE)) {
+                if(preAction.equals(curAction)) {               // Redundant
+                    System.out.println("REDUNDANT policy: " + prePolicy.toString() + " with "
+                            + curPolicy.toString());
+                    System.out.println("Delete former policy: " + prePolicy.toString());
+                    it.remove();
+                } else {                                        // Special case
+                    System.out.println("SPECIAL_CASE policy: " + prePolicy.toString() + " of "
+                            + curPolicy.toString());
                 }
             }
         }
+
+        // not conflict
+        return false;
     }
 
     public static void main(String [] args) {
         String fileName = "/home/bishe2016/Liu/Graduation/IdeaProjects/IntraAclConflict/policy.txt";
 
+        int flag = 2;
+
         ArrayList<Policy> policies = MyReadFile.createPolicyByLine(fileName);
 
-        checkList(policies);
+        // if check and add in MyReadFile.java(flag = 2), this is useless
+        if(flag == 1) {
+            checkList(policies);
+        }
 
+        System.out.println("===============Final Policies：================");
         for (Policy policy : policies) {
             System.out.println(policy.toString());
         }

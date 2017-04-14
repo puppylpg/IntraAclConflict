@@ -14,16 +14,17 @@ public class MyReadFile {
     public static ArrayList<Policy> createPolicyByLine(String fileName) {
         ArrayList<Policy> policies = new ArrayList<>();
 
+        // 1: add all policies to ArrayList, then check
+        // 2: check the policy, then add to ArrayList
+        int flag = 2;
+
         File file = new File(fileName);
         BufferedReader reader = null;
         try {
-//            System.out.println("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
             String policyLine = null;
             int line = 1;
-            // 一次读入一行，直到读入null为文件结束
             while ((policyLine = reader.readLine()) != null) {
-                // 显示行号
                 System.out.println("line " + line + ": " + policyLine);
                 line++;
 
@@ -33,7 +34,17 @@ public class MyReadFile {
 //                }
                 Policy p = new Policy(policy[0], Byte.parseByte(policy[1]), policy[2], Byte.parseByte(policy[3]), policy[4]);
                 System.out.println(p);
-                policies.add(p);
+
+                if(flag == 1) {
+                    policies.add(p);
+                } else {
+                    if (!PolicyCheck.checkToAdd(p, policies)) {
+                        policies.add(p);
+                        System.out.println("Add policy " + p.toString());
+                    } else {
+                        System.out.println("Conflicts, don't Add!");
+                    }
+                }
             }
             reader.close();
         } catch (IOException e) {
