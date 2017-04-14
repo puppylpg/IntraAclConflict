@@ -13,7 +13,9 @@ public class Constant {
 
     public static final String COMP_EQUAL = "equal";
     public static final String COMP_BE = "be";
+    public static final String COMP_BIGGER = "bigger";
     public static final String COMP_LESS = "less";
+    public static final String COMP_LE = "le";
     public static final String COMP_NOTEQUAL = "notEqual";
 
     public static final String SRC_EQUAL = "srcEqual";
@@ -25,6 +27,7 @@ public class Constant {
 
     public static final String SHADOW = "shadow";
     public static final String REDUNDANT = "redundant";
+    public static final String SPECIALCASE = "specialcase";
     public static final String NOCONFLICT = "noConflict";
 
 }
