@@ -31,7 +31,7 @@ public class MyReadFile {
 //                for(String part : policy) {
 //                    System.out.println(part);
 //                }
-                Policy p = new Policy(policy[0], Integer.parseInt(policy[1]), policy[2], Integer.parseInt(policy[3]), policy[4]);
+                Policy p = new Policy(policy[0], Byte.parseByte(policy[1]), policy[2], Byte.parseByte(policy[3]), policy[4]);
                 System.out.println(p);
                 policies.add(p);
             }

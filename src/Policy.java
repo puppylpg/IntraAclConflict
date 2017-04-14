@@ -3,12 +3,12 @@
  */
 public class Policy {
     String src;
-    int srcPrefixLen;
+    byte srcPrefixLen;
     String des;
-    int desPrefixLen;
+    byte desPrefixLen;
     String action;
 
-    Policy(String src, int srcPrefixLen, String des, int desPrefixLen, String action) {
+    Policy(String src, byte srcPrefixLen, String des, byte desPrefixLen, String action) {
         this.src = src;
         this.des = des;
         this.action = action;
