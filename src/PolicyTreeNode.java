@@ -126,6 +126,7 @@ public class PolicyTreeNode {
                 }
                 if(ipComp.equals(Constant.COMP_LESS)) {       // SrcIP: A < B
                     if (destIPComp.equals(Constant.COMP_LESS)) {    // desIP: A < B and Action same : REDUNDANT
+                        //TODO: report the redundant one(put policy ID at the LEAF first)
                         return Constant.REDUNDANT;
                     } else {                                        // desIP: A !< B : continue
                         continue;
